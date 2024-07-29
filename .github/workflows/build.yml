@@ -182,27 +182,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: wheels-ubuntu-latest
-          path: dist
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: wheels-windows-2019
-          path: dist
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: wheels-macos-latest
-          path: dist
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: sdist
+          name: wheels-${{ matrix.os }}
           path: dist
 
       - name: Install wheel
         run: |
-          pip install dist/*.tar.gz
+          pip install dist/*.whl
 
       - name: Verify installation
         run: |
