@@ -186,10 +186,19 @@ jobs:
           path: dist
 
       - name: Install wheel
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
           python_version=$(python -c "import sys; print('cp{}{}'.format(sys.version_info.major, sys.version_info.minor))")
           wheel_file=$(ls dist/*$python_version*.whl)
           pip install $wheel_file
+
+      - name: Install wheel(Windows)
+        if: matrix.os == 'windows-2019'
+        shell: pwsh
+        run: |
+          $python_version = (python -c "import sys; print('cp{}{}'.format([int]$sys.version_info.major, [int]$sys.version_info.minor))").Trim()
+          $wheel_file = Get-ChildItem -Path dist -Filter "*$python_version*.whl" | Select-Object -First 1
+          pip install $wheel_file.FullName
 
       - name: Verify installation
         run: |
