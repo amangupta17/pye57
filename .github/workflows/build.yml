@@ -187,7 +187,9 @@ jobs:
 
       - name: Install wheel
         run: |
-          pip install dist/*.whl
+          python_version=$(python -c "import sys; print('cp{}{}'.format(sys.version_info.major, sys.version_info.minor))")
+          wheel_file=$(ls dist/*$python_version*.whl)
+          pip install $wheel_file
 
       - name: Verify installation
         run: |
