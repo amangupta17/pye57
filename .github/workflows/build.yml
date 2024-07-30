@@ -117,6 +117,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "windows-2019", "macos-latest"]
+        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
 
     steps:
       - uses: actions/checkout@v2
@@ -124,7 +125,9 @@ jobs:
           submodules: recursive
 
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel
+        run: |
+          python -m pip install -U pip
+          python -m pip install cibuildwheel
 
       - name: Build wheels (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
@@ -196,9 +199,12 @@ jobs:
         if: matrix.os == 'windows-2019'
         shell: pwsh
         run: |
-          $python_version = (python -c "import sys; print('cp{}{}'.format([int]$sys.version_info.major, [int]$sys.version_info.minor))").Trim()
+          $python_version = (python -c "import sys; print('cp{}{}'.format(sys.version_info.major, sys.version_info.minor))").Trim()
+          echo $python_version
           $wheel_file = Get-ChildItem -Path dist -Filter "*$python_version*.whl" | Select-Object -First 1
-          pip install $wheel_file.FullName
+          echo $wheel_file
+          echo $wheel_file.FullName
+          python -m pip install $wheel_file.FullName
 
       - name: Verify installation
         run: |
