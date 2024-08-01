@@ -26,7 +26,11 @@ if [[ "$(uname)" == "Darwin" ]]; then
     echo "Generate configure script using autoreconf..."
     autoreconf -i
     echo "Configure Xerces-C for macOS..."
-    ./configure --prefix=/usr/local --enable-static
+    if [[ "$(uname -m)" == "x86_64" ]]; then
+        ./configure CFLAGS="-arch x86_64" CXXFLAGS="-arch x86_64" --prefix=/usr/local --enable-static
+    else
+        ./configure --prefix=/usr/local --enable-static
+    fi
     echo "Build Xerces-C..."
     make
     echo "Install Xerces-C..."
